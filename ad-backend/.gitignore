@@ -1,0 +1,16 @@
+# dependencies
+/node_modules
+/jspm_packages/
+
+# env
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+
+# editor
+.vscode/
+.idea/
+.sass-cache/
+.pnp/
+.pnp.js

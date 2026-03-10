@@ -1,0 +1,13 @@
+services:
+  backend:
+    # bind local code folder to container's /app folder
+    volumes:
+      - ./ad-backend:/app
+      - /app/node_modules
+    # override the default command to use nodemon for hot reload
+    command: npx nodemon -L ./bin/www
+    environment:
+      NODE_ENV: ${NODE_ENV}
+
+# chaining multiple compose files together, the later one will override the previous one
+# docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
