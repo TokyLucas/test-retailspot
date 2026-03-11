@@ -12,3 +12,4 @@
   - Utilisation de Docker pour standardiser l'environnement d'exécution.
   - Permet d'assurer la reproductibilité entre développement, test et production.
   - Simplifie le déploiement et la gestion des dépendances.
+

@@ -15,7 +15,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/campaigns?advertiser=ke&status=active",
+              "raw": "{{base_url}}/api/campaigns",
               "host": [
                 "{{base_url}}"
               ],
@@ -26,7 +26,8 @@
               "query": [
                 {
                   "key": "advertiser",
-                  "value": "ke"
+                  "value": "",
+                  "disabled": true
                 },
                 {
                   "key": "country",
@@ -47,7 +48,8 @@
                 },
                 {
                   "key": "status",
-                  "value": "active"
+                  "value": "active",
+                  "disabled": true
                 }
               ]
             }
@@ -61,7 +63,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Summer Campaign\",\r\n    \"advertiser\": \"Nike\",\r\n    \"startDate\": \"2026-02-01\",\r\n    \"endDate\": \"2026-06-05\",\r\n    \"budget\": 10000,\r\n    \"targetCountries\": [\r\n        \"FR\",\r\n        \"ES\"\r\n    ],\r\n    \"status\": \"active\"\r\n}",
+              "raw": "{\r\n    \"name\": \"A\",\r\n    \"advertiser\": \"Adidas\",\r\n    \"startDate\": \"2026-02-01\",\r\n    \"endDate\": \"2026-06-05\",\r\n    \"budget\": 10000,\r\n    \"targetCountries\": [\r\n        \"UK\",\r\n        \"DE\"\r\n    ],\r\n    \"status\": \"active\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -110,6 +112,24 @@
                   "value": "FR",
                   "disabled": true
                 }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "stats"
               ]
             }
           },
