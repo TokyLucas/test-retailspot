@@ -2,8 +2,10 @@ services:
   backend:
     build: ./ad-backend
     ports: ["3000:3000"]
+    env_file:
+      - .env 
     environment:
-      MONGO_URL: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}
+      MONGO_URI: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB}?authSource=admin
       NODE_ENV: ${NODE_ENV}
 
   mongo:

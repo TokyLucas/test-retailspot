@@ -1,0 +1,83 @@
+{
+  "info": {
+    "_postman_id": "f81bd5e6-8cec-497d-bcca-7a723ad1d734",
+    "name": "adtech",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "27986279"
+  },
+  "item": [
+    {
+      "name": "campaigns",
+      "item": [
+        {
+          "name": "GET Campaign",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/campaigns?advertiser=ke",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "campaigns"
+              ],
+              "query": [
+                {
+                  "key": "advertiser",
+                  "value": "ke"
+                },
+                {
+                  "key": "country",
+                  "value": "FR",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "country",
+                  "value": "ES",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "country",
+                  "value": "DE",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Campaign",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Summer Campaign\",\r\n    \"advertiser\": \"Nike\",\r\n    \"startDate\": \"2025-06-01\",\r\n    \"endDate\": \"2025-07-01\",\r\n    \"budget\": 10000,\r\n    \"targetCountries\": [\r\n        \"FR\",\r\n        \"ES\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/campaigns",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "campaigns"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
