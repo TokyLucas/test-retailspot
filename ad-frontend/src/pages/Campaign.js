@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllCampaigns, createCampaign } from '../services/campaignService';
+import { getAllCampaigns, createCampaign, serveAd } from '../services/campaignService';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 
 const countries = [
@@ -13,9 +13,8 @@ const countries = [
 const statuses = ['active', 'paused', 'ended'];
 
 const Campaign = () => {
-    const [campaigns, setCampaigns] = useState([])
+    // new campaign
     const [open, setOpen] = useState(false)
-
     const [newCampaignLoading, setNewCampaignLoading] = useState(null);
     const [newCampaignError, setNewCampaignError] = useState(null);
     const [newCampaignSuccess, setNewCampaignSuccess] = useState(null);
@@ -49,6 +48,9 @@ const Campaign = () => {
             })
     }
 
+    // filter
+    const [campaigns, setCampaigns] = useState([])
+    const [serveAdOpen, setServeAdOpen] = useState(false)
     const [filters, setFilters] = useState({
         advertiser: '',
         targetCountries: '',
@@ -58,6 +60,38 @@ const Campaign = () => {
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
     };
+
+    // serve
+    const [serveAdLoading, setServeAdLoading] = useState(null);
+    const [serveAdError, setServeAdError] = useState(null);
+    const [serveAdSuccess, setServeAdSuccess] = useState(null);
+    const [serveAdBody, setServeAdBody] = useState("");
+    const [serveAdFilters, setServeAdFilters] = useState({
+        country: '',
+    });
+    const handleServeAdFilter = (e) => {
+        const { name, value } = e.target
+        setServeAdFilters(prev => ({ ...prev, [name]: value }))
+    };
+    const submitServeAd = () => {
+        setServeAdLoading('Serving Ad')
+        serveAd(serveAdFilters)
+            .then(res => {
+                var data = JSON.stringify(res, null, 2);
+                setServeAdBody(data);
+                setServeAdSuccess('Ad served successfully!');
+                setServeAdError(null);
+            })
+            .catch(err => {
+                setServeAdError(err.message);
+                setServeAdSuccess(null);
+            })
+            .finally(() => {
+                setServeAdLoading(null);
+                getAllCampaigns().then(setCampaigns).catch(console.error);
+            })
+    }
+
 
     useEffect(() => {
         const activeFilters = {
@@ -73,13 +107,23 @@ const Campaign = () => {
 
     return (
         <>
-            <div>
+            <div className="flex gap-2">
                 <button
                     onClick={() => setOpen(true)}
                     className="bg-sky-500/100 px-2.5 py-1.5 text-sm font-semibold text-white inset-ring inset-ring-white/5 hover:bg-sky-700"
                 >
                     Create Campaign
                 </button>
+
+                <button
+                    onClick={() => setServeAdOpen(true)}
+                    className="bg-sky-500/100 px-2.5 py-1.5 text-sm font-semibold text-white inset-ring inset-ring-white/5 hover:bg-sky-700"
+                >
+                    Serve Ad
+                </button>
+            </div>
+
+            <div>
                 <Dialog open={open} onClose={setOpen} className="relative z-10">
                     <DialogBackdrop
                         transition
@@ -101,7 +145,7 @@ const Campaign = () => {
                                             <form className="w-full my-2">
 
                                                 {newCampaignLoading && (
-                                                    <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-sky-500 rounded-base bg-green-500/50" role="alert">
+                                                    <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-sky-500 rounded-base bg-sky-500/50" role="alert">
                                                         {newCampaignLoading}
                                                     </div>
                                                 )}
@@ -199,6 +243,85 @@ const Campaign = () => {
                                         type="button"
                                         data-autofocus
                                         onClick={() => setOpen(false)}
+                                        className="mt-3 inline-flex w-full justify-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white inset-ring inset-ring-white/5 hover:bg-white/20 sm:mt-0 sm:w-auto"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </DialogPanel>
+                        </div>
+                    </div>
+                </Dialog>
+
+                <Dialog open={serveAdOpen} onClose={setServeAdOpen} className="relative z-10">
+                    <DialogBackdrop
+                        transition
+                        className="fixed inset-0 bg-gray-900/50 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+                    />
+
+                    <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                            <DialogPanel
+                                transition
+                                className="relative transform overflow-hidden rounded-lg bg-gray-800 text-left shadow-xl outline -outline-offset-1 outline-white/10 transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+                            >
+                                <div className="bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <div className="mt-3 text-center sm:mt-0 sm:text-left">
+                                        <DialogTitle as="h3" className="text-base font-semibold text-white">
+                                            Serve Ad
+                                        </DialogTitle>
+                                        <div className="mt-2">
+                                            <form className="w-full my-2">
+
+                                                {serveAdLoading && (
+                                                    <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-sky-500 rounded-base bg-sky-500/50" role="alert">
+                                                        {serveAdLoading}
+                                                    </div>
+                                                )}
+
+                                                {serveAdSuccess && (
+                                                    <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-green-500 rounded-base bg-green-500/50" role="alert">
+                                                        {serveAdSuccess}
+                                                    </div>
+                                                )}
+
+                                                {serveAdError && (
+                                                    <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-red-500 rounded-base bg-red-500/50" role="alert">
+                                                        {serveAdError}
+                                                    </div>
+                                                )}
+
+                                                <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-sky-500 rounded-base bg-sky-500/50" role="alert">
+                                                    <pre>{serveAdBody}</pre>
+                                                </div>
+
+                                                <select
+                                                    name="country"
+                                                    value={serveAdFilters.country}
+                                                    onChange={handleServeAdFilter}
+                                                    className="mb-2 block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs"
+                                                >
+                                                    {countries.map((c) => (
+                                                        <option key={c.code} value={c.code}>{c.name}</option>
+                                                    ))}
+                                                </select>
+
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="bg-gray-700/25 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                    <button
+                                        type="button"
+                                        onClick={() => submitServeAd()}
+                                        className="inline-flex w-full justify-center rounded-md bg-sky-500/100 hover:bg-sky-700 px-3 py-2 text-sm font-semibold text-white hover:bg-red-400 sm:ml-3 sm:w-auto"
+                                    >
+                                        Create
+                                    </button>
+                                    <button
+                                        type="button"
+                                        data-autofocus
+                                        onClick={() => setServeAdOpen(false)}
                                         className="mt-3 inline-flex w-full justify-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white inset-ring inset-ring-white/5 hover:bg-white/20 sm:mt-0 sm:w-auto"
                                     >
                                         Cancel

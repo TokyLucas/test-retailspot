@@ -22,5 +22,20 @@ export const createCampaign = async (campaignData) => {
     }
 
     return data
+}
 
+export const serveAd = async (filters) => {
+    const res = await fetch(`${API_URL}/api/serve-ad`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(filters),
+    })
+
+    const data = await res.json()
+
+    if (!res.ok) {
+        throw new Error(data.error || 'Failed to serve ad')
+    }
+
+    return data
 }
