@@ -1,29 +1,32 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useLocation } from 'react-router-dom'
 
 const user = {
-  name: 'Tom Cook',
-  email: 'tom@example.com',
-  imageUrl:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    name: 'Tom Cook',
+    email: 'tom@example.com',
+    imageUrl:
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '/', current: true },
-  { name: 'Campaigns', href: '/campaigns', current: false },
+    { name: 'Dashboard', href: '/' },
+    { name: 'Campaigns', href: '/campaigns' },
 ]
 
 const userNavigation = [
-  { name: 'Your profile', href: '#' },
-  { name: 'Settings', href: '#' },
-  { name: 'Sign out', href: '#' },
+    { name: 'Your profile', href: '#' },
+    { name: 'Settings', href: '#' },
+    { name: 'Sign out', href: '#' },
 ]
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+    return classes.filter(Boolean).join(' ')
 }
 
 const Header = () => {
+    const location = useLocation()
+
     return (
         <div className="min-h-full">
             <Disclosure as="nav" className="bg-gray-700">
@@ -39,19 +42,20 @@ const Header = () => {
                             </div>
                             <div className="hidden md:block">
                                 <div className="ml-10 flex items-baseline space-x-4">
-                                    {navigation.map((item) => (
-                                        <a
+                                    {navigation.map((item) => {
+                                        const isCurrent = location.pathname === item.href
+                                        return (<a
                                             key={item.name}
                                             href={item.href}
                                             aria-current={item.current ? 'page' : undefined}
                                             className={classNames(
-                                                item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                                isCurrent ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
                                                 'rounded-md px-3 py-2 text-sm font-medium',
                                             )}
                                         >
                                             {item.name}
-                                        </a>
-                                    ))}
+                                        </a>)
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -165,7 +169,14 @@ const Header = () => {
 
             <header className="relative bg-gray-800 shadow-sm">
                 <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-white">Dashboard</h1>
+                    <h1 className="text-3xl font-bold tracking-tight text-white">
+                        {navigation.map((item) => {
+                            const isCurrent = location.pathname === item.href
+                            if (isCurrent) {
+                                return (<>{item.name}</>)
+                            }
+                        })}
+                    </h1>
                 </div>
             </header>
         </div>

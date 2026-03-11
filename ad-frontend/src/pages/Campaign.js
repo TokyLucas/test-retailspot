@@ -23,7 +23,7 @@ const Campaign = () => {
         startDate: new Date().toISOString().split('T')[0],
         endDate: new Date().toISOString().split('T')[0],
         budget: 0,
-        targetCountries: countries[0].code,
+        targetCountries: [],
         status: statuses[0],
     });
     const handleNewCampaign = (e) => {
@@ -203,8 +203,12 @@ const Campaign = () => {
                                                 />
                                                 <select
                                                     name="targetCountries"
+                                                    multiple
                                                     value={newCampaign.targetCountries}
-                                                    onChange={handleNewCampaign}
+                                                    onChange={(e) => {
+                                                        const selected = Array.from(e.target.selectedOptions, opt => opt.value)
+                                                        setNewCampaign(prev => ({ ...prev, targetCountries: selected }))
+                                                    }}
                                                     className="mb-2 block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs"
                                                 >
                                                     {countries.map((c) => (
@@ -349,6 +353,7 @@ const Campaign = () => {
                         onChange={handleFilter}
                         className="block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs"
                     >
+                        <option key="" value="">All countries</option>
                         {countries.map((c) => (
                             <option key={c.code} value={c.code}>{c.name}</option>
                         ))}
@@ -368,7 +373,7 @@ const Campaign = () => {
                         ))}
                     </select>
 
-                    <button onClick={handleFilter} className="inline-flex items-center text-white bg-sky-500/100 hover:bg-sky-700 box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                    <button type="button" onClick={handleFilter} className="inline-flex items-center text-white bg-sky-500/100 hover:bg-sky-700 box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
                         <svg className="w-4 h-4 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" /></svg>
                         Search
                     </button>
