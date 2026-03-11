@@ -2,13 +2,49 @@ const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 
 const campaignSchema = new Schema({
-    name: String,
-    advertiser: String,
-    startDate: Date,
-    endDate: Date,
-    budget: Number,
-    impressionsServed: Number,
-    targetCountries: [String],
+    name: {
+        type: String,
+        required: true
+    },
+    advertiser: {
+        type: String,
+        required: true
+    },
+    startDate: {
+        type: Date,
+        required: true,
+        validate: {
+            validator: function (value) {
+                return value >= Date.now()
+            },
+            message: 'Starting date must be valid'
+        }
+    },
+    endDate: {
+        type: Date,
+        required: true,
+        validate: {
+            validator: function (value) {
+                return value >= this.startDate
+            },
+            message: 'Endign date must be after Starting date'
+        }
+    },
+    budget: {
+        type: Number,
+        required: true,
+        default: 0,
+        min: 0
+    },
+    impressionsServed: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    targetCountries: {
+        type: [String],
+        required: true
+    },
     status: {
         type: String,
         enum: ['active', 'paused', 'ended']

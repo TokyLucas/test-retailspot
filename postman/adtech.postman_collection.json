@@ -15,7 +15,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/campaigns?advertiser=ke",
+              "raw": "{{base_url}}/api/campaigns?advertiser=ke&status=active",
               "host": [
                 "{{base_url}}"
               ],
@@ -44,6 +44,10 @@
                   "key": "country",
                   "value": "DE",
                   "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "active"
                 }
               ]
             }
@@ -57,7 +61,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Summer Campaign\",\r\n    \"advertiser\": \"Nike\",\r\n    \"startDate\": \"2025-06-01\",\r\n    \"endDate\": \"2025-07-01\",\r\n    \"budget\": 10000,\r\n    \"targetCountries\": [\r\n        \"FR\",\r\n        \"ES\"\r\n    ]\r\n}",
+              "raw": "{\r\n    \"name\": \"Summer Campaign\",\r\n    \"advertiser\": \"Nike\",\r\n    \"startDate\": \"2026-04-01\",\r\n    \"endDate\": \"2026-06-05\",\r\n    \"budget\": 10000,\r\n    \"targetCountries\": [\r\n        \"FR\",\r\n        \"ES\"\r\n    ],\r\n    \"status\": \"active\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
