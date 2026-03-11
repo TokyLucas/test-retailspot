@@ -3,7 +3,6 @@ const Campaign = require('../models/campaign.model');
 exports.getAllCampaign = async (req, res, next) => {
     try {
         const query = req.query;
-        console.log(query)
         const campaigns = await Campaign.find({
             ...(query.status && { status: query.status }),
             ...(query.advertiser && { advertiser: { $regex: query.advertiser, $options: 'i' } }),
@@ -27,3 +26,32 @@ exports.postCampaign = async (req, res, next) => {
     }
 };
 
+exports.serveAd = async (req, res, next) => {
+    try {
+        const body = req.body;
+        const today = new Date();
+        const campaign = await Campaign.findOneAndUpdate(
+            {
+                status: 'active',
+                startDate: { $lte: today },
+                endDate: { $gte: today },
+                targetCountries: { $in: body.country },
+                $expr: {
+                    $gt: ['$budget', '$impressionsServed']
+                }
+            },
+            { $inc: { impressionsServed: 1 } },
+            { returnDocument: 'after' }
+        )
+        res.json(campaign);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.stats = async (req, res, next) => {
+    try {
+        const campaigns = await Campaign.find();
+    } catch (err) {
+    }
+}

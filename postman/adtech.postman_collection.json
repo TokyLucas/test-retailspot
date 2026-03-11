@@ -61,7 +61,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Summer Campaign\",\r\n    \"advertiser\": \"Nike\",\r\n    \"startDate\": \"2026-04-01\",\r\n    \"endDate\": \"2026-06-05\",\r\n    \"budget\": 10000,\r\n    \"targetCountries\": [\r\n        \"FR\",\r\n        \"ES\"\r\n    ],\r\n    \"status\": \"active\"\r\n}",
+              "raw": "{\r\n    \"name\": \"Summer Campaign\",\r\n    \"advertiser\": \"Nike\",\r\n    \"startDate\": \"2026-02-01\",\r\n    \"endDate\": \"2026-06-05\",\r\n    \"budget\": 10000,\r\n    \"targetCountries\": [\r\n        \"FR\",\r\n        \"ES\"\r\n    ],\r\n    \"status\": \"active\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -76,6 +76,40 @@
               "path": [
                 "api",
                 "campaigns"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Serve Ad",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"country\": \"FR\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/serve-ad",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "serve-ad"
+              ],
+              "query": [
+                {
+                  "key": "country",
+                  "value": "FR",
+                  "disabled": true
+                }
               ]
             }
           },

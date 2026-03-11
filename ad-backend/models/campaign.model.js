@@ -12,13 +12,7 @@ const campaignSchema = new Schema({
     },
     startDate: {
         type: Date,
-        required: true,
-        validate: {
-            validator: function (value) {
-                return value >= Date.now()
-            },
-            message: 'Starting date must be valid'
-        }
+        required: true
     },
     endDate: {
         type: Date,
