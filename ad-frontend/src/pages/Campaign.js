@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { getAllCampaigns } from '../services/campaignService';
+import { getAllCampaigns, createCampaign } from '../services/campaignService';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 const countries = [
     { code: 'US', name: 'United States' },
@@ -16,12 +15,45 @@ const statuses = ['active', 'paused', 'ended'];
 const Campaign = () => {
     const [campaigns, setCampaigns] = useState([])
     const [open, setOpen] = useState(false)
+
+    const [newCampaignLoading, setNewCampaignLoading] = useState(null);
+    const [newCampaignError, setNewCampaignError] = useState(null);
+    const [newCampaignSuccess, setNewCampaignSuccess] = useState(null);
+    const [newCampaign, setNewCampaign] = useState({
+        name: '',
+        advertiser: '',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
+        budget: 0,
+        targetCountries: countries[0].code,
+        status: statuses[0],
+    });
+    const handleNewCampaign = (e) => {
+        const { name, value } = e.target
+        setNewCampaign(prev => ({ ...prev, [name]: value }))
+    };
+    const submitNewCampaign = () => {
+        setNewCampaignLoading('Creating campaign')
+        createCampaign(newCampaign)
+            .then(res => {
+                setNewCampaignSuccess('Campaign created successfully!');
+                setNewCampaignError(null);
+            })
+            .catch(err => {
+                setNewCampaignError(err.message);
+                setNewCampaignSuccess(null);
+            })
+            .finally(() => {
+                setNewCampaignLoading(null);
+                getAllCampaigns().then(setCampaigns).catch(console.error);
+            })
+    }
+
     const [filters, setFilters] = useState({
         advertiser: '',
         targetCountries: '',
         status: ''
     });
-
     const handleFilter = (e) => {
         const { name, value } = e.target
         setFilters(prev => ({ ...prev, [name]: value }))
@@ -61,20 +93,104 @@ const Campaign = () => {
                                 className="relative transform overflow-hidden rounded-lg bg-gray-800 text-left shadow-xl outline -outline-offset-1 outline-white/10 transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
                             >
                                 <div className="bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                    <div className="sm:flex sm:items-start">
-                                        <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                            <DialogTitle as="h3" className="text-base font-semibold text-white">
-                                                Create a new campaign
-                                            </DialogTitle>
-                                            <div className="mt-2">
-                                            </div>
+                                    <div className="mt-3 text-center sm:mt-0 sm:text-left">
+                                        <DialogTitle as="h3" className="text-base font-semibold text-white">
+                                            Create a new campaign
+                                        </DialogTitle>
+                                        <div className="mt-2">
+                                            <form className="w-full my-2">
+
+                                                {newCampaignLoading && (
+                                                    <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-sky-500 rounded-base bg-green-500/50" role="alert">
+                                                        {newCampaignLoading}
+                                                    </div>
+                                                )}
+
+                                                {newCampaignSuccess && (
+                                                    <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-green-500 rounded-base bg-green-500/50" role="alert">
+                                                        {newCampaignSuccess}
+                                                    </div>
+                                                )}
+
+                                                {newCampaignError && (
+                                                    <div className="p-4 mb-4 text-sm text-white text-fg-danger-strong border-1 border-red-500 rounded-base bg-red-500/50" role="alert">
+                                                        {newCampaignError}
+                                                    </div>
+                                                )}
+
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    value={newCampaign.name}
+                                                    onChange={handleNewCampaign}
+                                                    placeholder="Name"
+                                                    className="mb-2 px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium rounded-base ps-9 text-heading text-sm focus:ring-brand focus:border-brand block w-full placeholder:text-body"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    name="advertiser"
+                                                    value={newCampaign.advertiser}
+                                                    onChange={handleNewCampaign}
+                                                    placeholder="Advertiser"
+                                                    className="mb-2 px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium rounded-base ps-9 text-heading text-sm focus:ring-brand focus:border-brand block w-full placeholder:text-body"
+                                                />
+                                                <input
+                                                    type="date"
+                                                    name="startDate"
+                                                    value={newCampaign.startDate}
+                                                    onChange={handleNewCampaign}
+                                                    placeholder="Start Date"
+                                                    className="mb-2 px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium rounded-base ps-9 text-heading text-sm focus:ring-brand focus:border-brand block w-full placeholder:text-body"
+                                                />
+                                                <input
+                                                    type="date"
+                                                    name="endDate"
+                                                    value={newCampaign.endDate}
+                                                    onChange={handleNewCampaign}
+                                                    placeholder="End Date"
+                                                    className="mb-2 px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium rounded-base ps-9 text-heading text-sm focus:ring-brand focus:border-brand block w-full placeholder:text-body"
+                                                />
+                                                <input
+                                                    type="number"
+                                                    name="budget"
+                                                    value={newCampaign.budget}
+                                                    onChange={handleNewCampaign}
+                                                    placeholder="Budget"
+                                                    className="mb-2 px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium rounded-base ps-9 text-heading text-sm focus:ring-brand focus:border-brand block w-full placeholder:text-body"
+                                                />
+                                                <select
+                                                    name="targetCountries"
+                                                    value={newCampaign.targetCountries}
+                                                    onChange={handleNewCampaign}
+                                                    className="mb-2 block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs"
+                                                >
+                                                    {countries.map((c) => (
+                                                        <option key={c.code} value={c.code}>{c.name}</option>
+                                                    ))}
+                                                </select>
+
+                                                <select
+                                                    name="status"
+                                                    value={newCampaign.status}
+                                                    onChange={handleNewCampaign}
+                                                    className="mb-2 block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs"
+                                                >
+                                                    <option value="">All statuses</option>
+                                                    {statuses.map((s) => (
+                                                        <option key={s} value={s}>
+                                                            {s.charAt(0).toUpperCase() + s.slice(1)}
+                                                        </option>
+                                                    ))}
+                                                </select>
+
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="bg-gray-700/25 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                     <button
                                         type="button"
-                                        onClick={() => setOpen(false)}
+                                        onClick={() => submitNewCampaign()}
                                         className="inline-flex w-full justify-center rounded-md bg-sky-500/100 hover:bg-sky-700 px-3 py-2 text-sm font-semibold text-white hover:bg-red-400 sm:ml-3 sm:w-auto"
                                     >
                                         Create
