@@ -30,19 +30,30 @@ exports.serveAd = async (req, res, next) => {
     try {
         const body = req.body;
         const today = new Date();
-        const campaign = await Campaign.findOneAndUpdate(
+
+        const matching = await Campaign.aggregate([
             {
-                status: 'active',
-                startDate: { $lte: today },
-                endDate: { $gte: today },
-                targetCountries: { $in: body.country },
-                $expr: {
-                    $gt: ['$budget', '$impressionsServed']
+                $match: {
+                    status: 'active',
+                    startDate: { $lte: today },
+                    endDate: { $gte: today },
+                    targetCountries: { $in: [body.country] },
+                    $expr: { $gt: ['$budget', '$impressionsServed'] }
                 }
             },
+            { $sample: { size: 1 } }
+        ])
+
+        if (!matching.length) {
+            return res.status(404).json({ error: 'No campaign available' })
+        }
+
+        const campaign = await Campaign.findByIdAndUpdate(
+            matching[0]._id,
             { $inc: { impressionsServed: 1 } },
-            { returnDocument: 'after' }
+            { new: true }
         );
+        
         res.json(campaign);
     } catch (err) {
         next(err);
