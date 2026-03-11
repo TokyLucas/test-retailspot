@@ -39,3 +39,9 @@ export const serveAd = async (filters) => {
 
     return data
 }
+
+export const getStats = async () => {
+    const res = await fetch(`${API_URL}/api/stats`)
+    if (!res.ok) throw new Error('Failed to fetch stats')
+    return res.json()
+}

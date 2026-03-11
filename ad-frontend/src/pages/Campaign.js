@@ -3,8 +3,7 @@ import { getAllCampaigns, createCampaign, serveAd } from '../services/campaignSe
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 
 const countries = [
-    { code: 'US', name: 'United States' },
-    { code: 'GB', name: 'United Kingdom' },
+    { code: 'UK', name: 'United Kingdom' },
     { code: 'FR', name: 'France' },
     { code: 'ES', name: 'Spain' },
     { code: 'DE', name: 'Germany' },
@@ -67,7 +66,7 @@ const Campaign = () => {
     const [serveAdSuccess, setServeAdSuccess] = useState(null);
     const [serveAdBody, setServeAdBody] = useState("");
     const [serveAdFilters, setServeAdFilters] = useState({
-        country: '',
+        country: countries[0].code,
     });
     const handleServeAdFilter = (e) => {
         const { name, value } = e.target
@@ -396,6 +395,9 @@ const Campaign = () => {
                             <th scope="col" className="px-6 py-3 font-medium">
                                 Budget
                             </th>
+                            <th scope="col" className="px-6 py-3 font-medium">
+                                Countries
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -420,6 +422,9 @@ const Campaign = () => {
                                 </td>
                                 <td className="px-6 py-4">
                                     {campaign.budget}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {campaign.targetCountries?.join(', ')}
                                 </td>
                             </tr>
                         ))}
