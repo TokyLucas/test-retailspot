@@ -42,7 +42,7 @@ exports.serveAd = async (req, res, next) => {
             },
             { $inc: { impressionsServed: 1 } },
             { returnDocument: 'after' }
-        )
+        );
         res.json(campaign);
     } catch (err) {
         next(err);
@@ -51,7 +51,36 @@ exports.serveAd = async (req, res, next) => {
 
 exports.stats = async (req, res, next) => {
     try {
-        const campaigns = await Campaign.find();
+        const query = req.query;
+        const limit = parseInt(query.limit) || 5;
+
+        const totalCampaigns = await Campaign.countDocuments();
+        const activeCampaigns = await Campaign.countDocuments({ status: 'active' });
+        const totalImpressions = await Campaign.aggregate([
+            { $group: { _id: null, total: { $sum: '$impressionsServed' } } }
+        ]);
+        const topAdvertisers = await Campaign.aggregate([
+            {
+                $group: {
+                    _id: '$advertiser',
+                    totalCampaigns: { $sum: 1 },
+                    activeCampaigns: { $sum: { $cond: [{ $eq: ['$status', 'active'] }, 1, 0] } },
+                    totalImpressions: { $sum: '$impressionsServed' },
+                }
+            },
+            { $sort: { totalImpressions: -1, activeCampaigns: -1, totalImpressions: -1 } },
+            { $limit: limit }
+        ]);
+
+        var stats = {
+            "totalCampaings": totalCampaigns,
+            "activeCampaings": activeCampaigns,
+            "totalImpressions": totalImpressions[0]?.total || 0,
+            "topAdvertisers": topAdvertisers
+        };
+
+        res.json(stats);
     } catch (err) {
+        next(err);
     }
 }
