@@ -8,6 +8,16 @@ services:
     command: npx nodemon -L ./bin/www
     environment:
       NODE_ENV: ${NODE_ENV}
+  
+  frontend:
+    volumes:
+      - ./ad-frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - WDS_SOCKET_PORT=3001  
+    command: npx react-scripts start
 
 # chaining multiple compose files together, the later one will override the previous one
 # docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
